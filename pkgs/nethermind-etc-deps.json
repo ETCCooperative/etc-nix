@@ -1,0 +1,22 @@
+[
+  {
+    "pname": "Autofac",
+    "version": "9.1.0",
+    "hash": "sha256-TygJLo8rvWC/KCExg+Hy3eYc0sP+AdhpdlU6fOj11f0="
+  },
+  {
+    "pname": "Nethermind.Numerics.Int256",
+    "version": "1.4.0",
+    "hash": "sha256-HIw1Z0k/WorOTE9Iv2doVpDmhUjkcWFR0zdu0fOSpVA="
+  },
+  {
+    "pname": "Nethermind.ReferenceAssemblies",
+    "version": "1.38.1",
+    "hash": "sha256-QFOioUao20QHf+jzcWQMRFwPBuWtcLlCcf2EEMY/MQg="
+  },
+  {
+    "pname": "Newtonsoft.Json",
+    "version": "13.0.3",
+    "hash": "sha256-hy/BieY4qxBWVVsDqqOPaLy1QobiIapkbrESm6v2PHc="
+  }
+]

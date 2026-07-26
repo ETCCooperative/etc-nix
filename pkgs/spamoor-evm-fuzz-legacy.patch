@@ -1,0 +1,27 @@
+Make the evm-fuzz scenario deploy its fuzzed bytecode with LEGACY (type-0) contract-
+creation txs instead of EIP-1559 (type-2). Unlike the tx-fuzz scenario (which has a
+--tx-types flag), evm-fuzz hardcodes the tx type, so on a pre-London ETC chain with no
+base fee its deploys are rejected and nothing runs. GasPrice comes from GasFeeCap, which
+the scenario already sets from eth_gasPrice (baseFee-safe). To: nil is a contract
+creation either way; the fuzzed opcode/precompile bytecode it carries is unchanged.
+
+--- a/scenarios/evm-fuzz/evm_fuzz.go
++++ b/scenarios/evm-fuzz/evm_fuzz.go
+@@ -286,7 +286,7 @@ func (s *Scenario) deployFuzzedContract(ctx context.Context, txIdx uint64) (scen
+ 	if deployGas == 0 {
+ 		deployGas = s.walletPool.EstimateDeployGas(ctx, client, wallet.GetAddress(), value, fuzzedBytecode)
+ 	}
+-	txData, err := txbuilder.DynFeeTx(&txbuilder.TxMetadata{
++	txData, err := txbuilder.LegacyTx(&txbuilder.TxMetadata{
+ 		GasFeeCap: uint256.MustFromBig(feeCap),
+ 		GasTipCap: uint256.MustFromBig(tipCap),
+ 		Gas:       deployGas,
+@@ -298,7 +298,7 @@ func (s *Scenario) deployFuzzedContract(ctx context.Context, txIdx uint64) (scen
+ 		return nil, nil, client, wallet, err
+ 	}
+ 
+-	tx, err := wallet.BuildDynamicFeeTx(txData)
++	tx, err := wallet.BuildLegacyTx(txData)
+ 
+ 	if err != nil {
+ 		return nil, nil, client, wallet, err

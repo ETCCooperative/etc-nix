@@ -1,0 +1,96 @@
+{
+  "name": "ETC Devnet From 0",
+  "dataDir": "devnet",
+  "engine": {
+    "Etchash": {
+      "params": {
+        "minimumDifficulty": "0x20000",
+        "difficultyBoundDivisor": "0x800",
+        "durationLimit": "0xd",
+        "homesteadTransition": "0x0",
+        "eip100bTransition": "0x0",
+        "blockReward": {
+          "0x0": "0x4563918244f40000",
+          "0x4c4b41": "0x3782dace9d900000",
+          "0x989681": "0x2c68af0bb1400000",
+          "0xe4e1c1": "0x2386f26fc1000000",
+          "0x1312d01": "0x1c6bf52634000000",
+          "0x17d7841": "0x16bcc41e90000000",
+          "0x1c9c381": "0x12309ce540000000",
+          "0x2160ec1": "0xe8d4a5100000000",
+          "0x2625a01": "0xba43b7400000000",
+          "0x2aea541": "0x9502f9000000000"
+        },
+        "difficultyBombDelays": {
+          "0x4c4b40": "0x2dc6c0",
+          "0x5a06e0": "0x895440",
+          "0xb28720": "0x895440"
+        },
+        "ecip1017EraRounds": "0x4c4b40",
+        "dieHardTransition": "0x0",
+        "gothamTransition": "0x0",
+        "ecip1041Transition": "0x0",
+        "ecip1099Transition": "0x0",
+        "eip3651Transition": "0x0",
+        "eip3855Transition": "0x0",
+        "eip3860Transition": "0x0"
+      }
+    }
+  },
+  "params": {
+    "gasLimitBoundDivisor": "0x400",
+    "accountStartNonce": "0x0",
+    "maximumExtraDataSize": "0x20",
+    "minGasLimit": "0x1388",
+    "networkID": "0x20A81",
+    "chainId": "0x20A81",
+    "eip150Transition": "0x0",
+    "eip160Transition": "0x0",
+    "eip161abcTransition": "0x0",
+    "eip161dTransition": "0x0",
+    "eip155Transition": "0x0",
+    "maxCodeSize": "0x6000",
+    "maxCodeSizeTransition": "0x0",
+    "eip140Transition": "0x0",
+    "eip211Transition": "0x0",
+    "eip214Transition": "0x0",
+    "eip658Transition": "0x0",
+    "eip145Transition": "0x0",
+    "eip1014Transition": "0x0",
+    "eip1052Transition": "0x0",
+    "eip152Transition": "0x0",
+    "eip1108Transition": "0x0",
+    "eip1344Transition": "0x0",
+    "eip1884Transition": "0x0",
+    "eip2028Transition": "0x0",
+    "eip2200Transition": "0x0",
+    "eip2565Transition": "0x0",
+    "eip2929Transition": "0x0",
+    "eip2930Transition": "0x0",
+    "eip1559Transition": "0xdda248",
+    "eip3198Transition": "0xdda248",
+    "eip3529Transition": "0x0",
+    "eip3541Transition": "0x0",
+    "eip3651Transition": "0x0",
+    "eip3855Transition": "0x0",
+    "eip3860Transition": "0x0",
+    "homesteadTransition": "0x0",
+    "eip3607Transition": null
+  },
+  "genesis": {
+    "seal": {
+      "ethereum": {
+        "nonce": "0x0000000000000042",
+        "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "difficulty": "0x20000",
+    "author": "0x0000000000000000000000000000000000000000",
+    "timestamp": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "extraData": "0x",
+    "gasLimit": "0x7A1200"
+  },
+  "nodes": [],
+  "accounts": {}
+}

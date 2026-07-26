@@ -1,0 +1,50 @@
+Fund (and reclaim from) child wallets with LEGACY (type-0) transactions instead of
+EIP-1559 (type-2). The devnet is a pre-London ETC chain with no base fee, so the RPC
+rejects type-2 txs — and since the root wallet funds every child wallet before any
+scenario runs, the stock 1559 funding path blocks the whole daemon on this chain.
+GasPrice is taken from GasFeeCap, which the funders already set from eth_gasPrice
+(SuggestGasPrice) + a margin — a valid legacy price, no base-fee read involved.
+
+Only the two direct-EOA funders are touched (buildWalletFundingTx, buildWalletReclaimTx).
+The batch funder (buildWalletFundingBatchTx) is left as-is: it funds via a batcher
+CONTRACT that must be deployed with a type-2 tx, so it can't work pre-London anyway —
+the daemon is run with --without-batcher, which skips the batcher entirely.
+
+--- a/spamoor/walletpool.go
++++ b/spamoor/walletpool.go
+@@ -1257,7 +1257,7 @@ func (pool *WalletPool) buildWalletFundingTx(req *FundingRequest, client *Client
+ 	}
+ 
+ 	toAddr := req.Wallet.GetAddress()
+-	refillTx, err := txbuilder.DynFeeTx(&txbuilder.TxMetadata{
++	refillTx, err := txbuilder.LegacyTx(&txbuilder.TxMetadata{
+ 		GasFeeCap: uint256.MustFromBig(feeCap),
+ 		GasTipCap: uint256.MustFromBig(tipCap),
+ 		Gas:       pool.fundingGasForReq(req),
+@@ -1267,7 +1267,7 @@ func (pool *WalletPool) buildWalletFundingTx(req *FundingRequest, client *Client
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	tx, err := pool.rootWallet.wallet.BuildDynamicFeeTx(refillTx)
++	tx, err := pool.rootWallet.wallet.BuildLegacyTx(refillTx)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1372,7 +1372,7 @@ func (pool *WalletPool) buildWalletReclaimTx(ctx context.Context, childWallet *W
+ 		return nil, nil
+ 	}
+ 
+-	reclaimTx, err := txbuilder.DynFeeTx(&txbuilder.TxMetadata{
++	reclaimTx, err := txbuilder.LegacyTx(&txbuilder.TxMetadata{
+ 		GasFeeCap: uint256.MustFromBig(feeCap),
+ 		GasTipCap: uint256.MustFromBig(tipCap),
+ 		Gas:       gasLimit,
+@@ -1383,7 +1383,7 @@ func (pool *WalletPool) buildWalletReclaimTx(ctx context.Context, childWallet *W
+ 		return nil, err
+ 	}
+ 
+-	tx, err := childWallet.BuildDynamicFeeTx(reclaimTx)
++	tx, err := childWallet.BuildLegacyTx(reclaimTx)
+ 	if err != nil {
+ 		return nil, err
+ 	}

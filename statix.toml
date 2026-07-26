@@ -1,0 +1,4 @@
+# Las claves punteadas (boot.loader.grub, boot.kernel.sysctl, programs.*) son
+# idiomáticas en NixOS y suelen vivir en secciones lógicas separadas; agruparlas
+# a la fuerza resta legibilidad. Por eso deshabilitamos repeated_keys.
+disabled = ["repeated_keys"]

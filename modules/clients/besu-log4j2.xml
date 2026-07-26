@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Besu log4j2 config for etc.besu instances with enableJsonErrorLog = true. Reproduces
+  Besu's default console logging (so the journal looks normal) AND writes ERROR+ events as
+  one-JSON-per-line to ${env:BESU_JSON_LOG} for etc.sentryReporter (file_jsonl mode,
+  clientKind = besu). JsonLayout with stacktraceAsString=false emits `thrown.extendedStackTrace`,
+  which reporter.py's parse_java_stack consumes into a real Sentry exception. Wired via
+  LOG4J_CONFIGURATION_FILE (set by the besu module).
+-->
+<Configuration>
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZZZ} | %t | %-5level | %c{1} | %msg%n"/>
+    </Console>
+    <File name="JsonErrors" fileName="${env:BESU_JSON_LOG:-/var/log/besu/events.jsonl}">
+      <JsonLayout compact="true" eventEol="true" stacktraceAsString="false" properties="false"/>
+      <!-- reporter.py only forwards ERROR/FATAL for besu (LEVELS_BY_KIND); don't write WARN. -->
+      <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Root level="INFO">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="JsonErrors"/>
+    </Root>
+  </Loggers>
+</Configuration>
