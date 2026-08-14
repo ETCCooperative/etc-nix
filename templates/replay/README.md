@@ -50,11 +50,15 @@ nix build .#nixosConfigurations.my-replay.config.system.build.toplevel
 
 | client | `packagePath` | key `packageArgs` |
 |---|---|---|
-| core-geth | `${etc-nix}/pkgs/core-geth.nix` | `version, rev, srcHash, vendorHash` |
+| core-geth | `${etc-nix}/pkgs/core-geth.nix` | `version, rev, srcHash, vendorHash, buildGoModule` |
 | getc | `${etc-nix}/pkgs/getc.nix` | `version, rev, srcHash, vendorHash` |
 | nethermind | `${etc-nix}/pkgs/nethermind-etc.nix` | `pluginRev, version, …` |
 | besu | `${etc-nix}/pkgs/besu-etc.nix` | `pluginRev, besuVersion, …` |
 
-To replay a **fork** rather than a ref of the canonical client repo, override the client's
-source — the `-bin.nix` variants take a published release, the from-source variants take
-`owner`/`rev`. (First-class `--override-input` for client sources is a planned tool-repo change.)
+core-geth from source also needs `buildGoModule` from an older nixpkgs — see the
+`nixpkgs-go121` input in this template's `flake.nix` for why.
+
+To replay a **fork** rather than a ref of the canonical client repo, pass `srcOverride` to the
+from-source builder: it takes any path or fetched source (a `fetchFromGitHub` of your fork, a
+flake input, a local checkout), replaces the builder's own fetch, and makes `srcHash` unused.
+The `-bin.nix` variants instead take the release `url` of your build.

@@ -6,10 +6,15 @@
     etc-nix.url = "github:ETCCooperative/etc-nix";
     # Reuse the tool's pinned nixpkgs so your run is bit-for-bit comparable.
     nixpkgs.follows = "etc-nix/nixpkgs";
+    # Only needed to build core-geth FROM SOURCE: it pulls in fjl/memsize, which reaches
+    # runtime.stopTheWorld through //go:linkname — something the Go linker has rejected
+    # since 1.23, and the tool's nixpkgs packages nothing older. Drop this input if you
+    # point packagePath at a *-bin.nix builder, or at getc (which has no such dependency).
+    nixpkgs-go121.url = "github:NixOS/nixpkgs/nixos-24.05";
   };
 
   outputs =
-    { etc-nix, ... }:
+    { etc-nix, nixpkgs-go121, ... }:
     {
       # Deploy (builds on the box, so it works from macOS too):
       #   nix run github:nix-community/nixos-anywhere -- \
@@ -38,6 +43,8 @@
         # (pluginRev/version for nethermind-etc; pluginRev/besuVersion for besu-etc — see README).
         packagePath = "${etc-nix}/pkgs/core-geth.nix";
         packageArgs = {
+          # Required for the from-source Go builders — see the nixpkgs-go121 input above.
+          buildGoModule = nixpkgs-go121.legacyPackages.x86_64-linux.buildGo121Module;
           version = "my-branch"; # informational; also the default rev (v${version}) when rev unset
           rev = "0000000000000000000000000000000000000000";
           # srcHash:    nix run nixpkgs#nix-prefetch-github -- <owner> core-geth --rev <rev>
