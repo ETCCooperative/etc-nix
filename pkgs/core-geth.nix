@@ -34,6 +34,12 @@ buildGoModule {
     hash = srcHash;
   };
 
+  # Keep the module cache instead of a `go mod vendor` tree. evmc ships its C headers
+  # outside the Go package dirs (include/evmc/*.h, lib/loader/loader.c), and vendoring
+  # prunes everything a Go package does not directly contain — so the cgo compile of
+  # github.com/ethereum/evmc/v7/bindings/go/evmc dies on `'evmc/evmc.h' file not found`.
+  proxyVendor = true;
+
   # Only the `geth` binary. The rest of cmd/* (clef, faucet, devp2p, abigen…) is
   # not used on these nodes; building them only adds time and closure size.
   subPackages = [ "cmd/geth" ];
