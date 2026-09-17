@@ -50,10 +50,14 @@ nix build .#nixosConfigurations.my-replay.config.system.build.toplevel
 
 | client | `packagePath` | key `packageArgs` |
 |---|---|---|
-| core-geth | `${etc-nix}/pkgs/core-geth.nix` | `version, rev, srcHash, vendorHash` |
+| core-geth | `${etc-nix}/pkgs/core-geth.nix` | `version, rev, srcHash, vendorHash, buildGoModule` |
 | getc | `${etc-nix}/pkgs/getc.nix` | `version, rev, srcHash, vendorHash` |
 | nethermind | `${etc-nix}/pkgs/nethermind-etc.nix` | `pluginRev, version, …` |
 | besu | `${etc-nix}/pkgs/besu-etc.nix` | `pluginRev, besuVersion, …` |
+
+core-geth from source needs `buildGoModule` from an older nixpkgs **when the tree still
+carries `fjl/memsize`** (every 1.12.x release) — see the `nixpkgs-go121` input in this
+template's `flake.nix` for why. A tree that has dropped it builds with the tool's own nixpkgs.
 
 To replay a **fork** rather than a ref of the canonical client repo, pass `srcOverride` to the
 from-source builder: it takes any path or fetched source (a `fetchFromGitHub` of your fork, a
