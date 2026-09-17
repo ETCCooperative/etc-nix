@@ -33,7 +33,11 @@
   ];
 
   # ── Network ───────────────────────────────────────────────────────────────────
-  # DO provides the public IP via DHCP. The hostname is set per-host.
+  # A default for plain KVM hosts; the hostname is set per-host. Check it against your
+  # provider: several deliver the address through a config drive or metadata service rather
+  # than DHCP, and a box left on this default then installs cleanly and never comes back.
+  # hosts/replay and hosts/devnet turn it off and let cloud-init read the metadata instead
+  # (see docs/deploying-a-node.md).
   networking.useDHCP = lib.mkDefault true;
 
   # ── Users ────────────────────────────────────────────────────────────────────

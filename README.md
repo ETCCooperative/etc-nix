@@ -20,6 +20,10 @@ The template pins this flake and calls the factory with your own client ref / ch
 archive endpoint. Run parameters (block ranges, credentials, keys) stay runtime (`--extra-files`),
 never a commit. See `nixosConfigurations.example-{replay,devnet}` for a worked call.
 
+Putting a client on a standing machine instead of an experiment box:
+[docs/deploying-a-node.md](docs/deploying-a-node.md) collects what bites there — sops on a
+first activation, networking, and reading a deploy's exit status.
+
 ## Outputs
 
 - `lib.{mkReplay,mkDevnet}`
