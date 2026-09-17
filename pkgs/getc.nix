@@ -16,25 +16,36 @@
 # Bumping: change version/rev and refresh the two hashes:
 #   1. srcHash    → `nix run nixpkgs#nix-prefetch-github -- diega go-ethereum-classic --rev <rev>`
 #   2. vendorHash → leave lib.fakeHash, `nix build .#getc`, paste the hash from the error.
+# To build a tree that is not a commit of the repo above — a fork, or a local checkout —
+# pass `srcOverride`; it replaces the fetch below and makes srcHash unused. (It cannot be
+# called `src`: nixpkgs has a `pkgs.src` alias that throws, and callPackage would fill the
+# argument with it whenever a caller omits it.)
 {
   lib,
   buildGoModule,
   fetchFromGitHub,
   version,
   rev ? "v${version}",
-  srcHash,
+  srcHash ? null,
   vendorHash,
+  srcOverride ? null,
 }:
+assert lib.assertMsg (srcOverride != null || srcHash != null)
+  "getc: pass srcHash to fetch a commit of diega/go-ethereum-classic, or srcOverride to build a fork or local tree.";
 buildGoModule {
   pname = "getc";
   inherit version vendorHash;
 
-  src = fetchFromGitHub {
-    owner = "diega";
-    repo = "go-ethereum-classic";
-    inherit rev;
-    hash = srcHash;
-  };
+  src =
+    if srcOverride != null then
+      srcOverride
+    else
+      fetchFromGitHub {
+        owner = "diega";
+        repo = "go-ethereum-classic";
+        inherit rev;
+        hash = srcHash;
+      };
 
   # Only the `geth` binary. The rest of cmd/* (clef, faucet, devp2p, abigen…) is not used
   # on these nodes; building them only adds time and closure size.

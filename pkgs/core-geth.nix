@@ -14,25 +14,44 @@
 # Bumping: change version/rev and refresh the two hashes:
 #   1. srcHash    → `nix run nixpkgs#nix-prefetch-github -- etclabscore core-geth --rev <rev>`
 #   2. vendorHash → leave lib.fakeHash, `nix build .#core-geth`, paste the hash from the error.
+#
+# Building a tree that is not a public etclabscore commit — a fork, an embargoed
+# security release, a local checkout — is what `srcOverride` is for; it replaces
+# the fetchFromGitHub below and makes srcHash unused. `rev` still feeds the version
+# string, so pass the real commit if you want `geth version` to report it:
+#   pkgs.callPackage ./pkgs/core-geth.nix {
+#     version = "1.12.23"; rev = "c8d7de6b"; vendorHash = "...";
+#     srcOverride = inputs.my-private-tree;   # any path or fetched source
+#   }
+#
+# (It is not called `src`: nixpkgs has a `pkgs.src` alias that throws, and
+# callPackage would fill the argument with it whenever a caller omits it.)
 {
   lib,
   buildGoModule,
   fetchFromGitHub,
   version,
   rev ? "v${version}",
-  srcHash,
+  srcHash ? null,
   vendorHash,
+  srcOverride ? null,
 }:
+assert lib.assertMsg (srcOverride != null || srcHash != null)
+  "core-geth: pass srcHash to fetch a commit of etclabscore/core-geth, or srcOverride to build a fork or local tree.";
 buildGoModule {
   pname = "core-geth";
   inherit version vendorHash;
 
-  src = fetchFromGitHub {
-    owner = "etclabscore";
-    repo = "core-geth";
-    inherit rev;
-    hash = srcHash;
-  };
+  src =
+    if srcOverride != null then
+      srcOverride
+    else
+      fetchFromGitHub {
+        owner = "etclabscore";
+        repo = "core-geth";
+        inherit rev;
+        hash = srcHash;
+      };
 
   # Only the `geth` binary. The rest of cmd/* (clef, faucet, devp2p, abigen…) is
   # not used on these nodes; building them only adds time and closure size.
