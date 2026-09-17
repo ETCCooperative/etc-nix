@@ -26,6 +26,11 @@
 #
 # (It is not called `src`: nixpkgs has a `pkgs.src` alias that throws, and
 # callPackage would fill the argument with it whenever a caller omits it.)
+#
+# The Go toolchain comes from the caller via `buildGoModule`, and which one you need is a
+# property of the tree: one that still carries fjl/memsize (every 1.12.x release) needs
+# Go <= 1.22, one that has dropped it builds with the default. vendorHash is
+# toolchain-specific, so it changes when that moves.
 {
   lib,
   buildGoModule,
